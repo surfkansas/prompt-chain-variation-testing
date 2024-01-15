@@ -1,0 +1,10 @@
+[
+    {
+        "role": "system",
+        "content": "You are a helpful AI that answers user questions."
+    },
+    {
+        "role": "user",
+        "content": "What is the answer to the ultimate question of life, the universe, and everything?"
+    }
+]
