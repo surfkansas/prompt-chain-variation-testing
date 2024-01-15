@@ -2,3 +2,5 @@ sample/output
 __pycache__
 .venv
 .env
+pcvt.egg-info
+```
