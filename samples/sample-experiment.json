@@ -1,0 +1,60 @@
+{
+    "tests": {
+        "control": {
+            "chain": [
+                {
+                    "file": "control-chain.json",
+                    "start_index": 0,
+                    "count": 2
+                }
+            ],
+            "run_count": 20
+        },
+        "yoda": {
+            "chain": [
+                {
+                    "file": "yoda-chain.json",
+                    "start_index": 0,
+                    "count": 1
+                },
+                {
+                    "file": "control-chain.json",
+                    "start_index": 1,
+                    "count": 1
+                }
+            ],
+            "run_count": 20,
+            "settings": {
+                "model": "gpt-4",
+                "temperature": 0.6
+            }
+        }
+    },
+    "provider": "azure",
+    "settings": {
+        "model": "gpt-4",
+        "temperature": 0.5
+    },
+    "scoring": {
+        "scores": {
+            "knowledge": {
+                "abstract": "The assistant should be able to answer the question.",
+                "rubric": {
+                    "N/A": "The assistant does not answer the question at all.",
+                    "0": "The assistant incorrectly answers the question.",
+                    "1": "The assistant provides the correct refernce to the the source of the information, but does not provide an answer.",
+                    "2": "The assistant provides the correct answer, but does not provide any reference or context.",
+                    "3": "The assistant provides the correct answer and provides the reference to the source, but provides no additional contenxt.",
+                    "4": "The assistant provides the correct answer, provides the reference to the source, and provides one piece of additional context.",
+                    "5": "The assistant provides the correct answer, provides the reference to the source, and provides multiple pieces of additional context."
+                },
+                "grounding": "The answer to the Ulimate Question of Life, the Universe, and Everything is 42. The answer comes from the Douglas Adams book, 'The Hitchhikers Guide to the Galaxy'. It was calculated by the supercomputer Deep Thought over a period of 7.5 million years. The answer is confusing, as no one actually understand what the Ultimate Question of Life, the Universe, and Everything really is. It is postulated that the question and the answer are like matter and anti-matter, such that if both ever existed the Universe would cease to exist."
+            }
+        },
+        "provider": "azure",
+        "settings": {
+            "model": "gpt-4",
+            "temperature": 0
+        }
+    }
+}
