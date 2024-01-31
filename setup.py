@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
   name = 'pcvt',
-  py_modules = ['pcvt'],
+  packages = ['pcvt'],
   install_requires=[
         'openai>=1.7.2',
         'python-dotenv>=1.0.0'
