@@ -48,6 +48,7 @@
                     "4": "The assistant provides the correct answer, provides the reference to the source, and provides one piece of additional context.",
                     "5": "The assistant provides the correct answer, provides the reference to the source, and provides multiple pieces of additional context."
                 },
+                "min_acceptable_score": 3,
                 "grounding": "The answer to the Ulimate Question of Life, the Universe, and Everything is 42. The answer comes from the Douglas Adams book, 'The Hitchhikers Guide to the Galaxy'. It was calculated by the supercomputer Deep Thought over a period of 7.5 million years. The answer is confusing, as no one actually understand what the Ultimate Question of Life, the Universe, and Everything really is. It is postulated that the question and the answer are like matter and anti-matter, such that if both ever existed the Universe would cease to exist."
             }
         },

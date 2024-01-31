@@ -182,6 +182,7 @@ class Experiment:
             score.system_prompt = experiment_definition['scoring']['scores'][score_name].get('system_prompt', None)
             score.abstract = experiment_definition['scoring']['scores'][score_name].get('abstract', None)
             score.rubric = experiment_definition['scoring']['scores'][score_name]['rubric']
+            score.min_acceptable_score = experiment_definition['scoring']['scores'][score_name].get('min_acceptable_score', None)
             score.grounding = experiment_definition['scoring']['scores'][score_name].get('grounding', None)
             
             scores[score_name] = score
@@ -199,3 +200,78 @@ class Experiment:
         
         for score_name in self.scores:
             self.scores[score_name].run_scoring(results_path)
+
+    def get_scoring_summary(self, results_path):
+
+        summary = {}
+
+        error_found = False
+        unexpected_found = False
+
+        for score_name in self.scores:
+            score_summary = []
+            suffix = f'.{score_name}.score.json'
+
+            for test_name in self.tests:
+                score_summary_row = {
+                    'Test': test_name,
+                    'Errors': 0,
+                    'Unexpected Scores': 0
+                }
+
+                for rubric_key in self.scores[score_name].rubric:
+                    score_summary_row[rubric_key] = 0
+
+                for root, dirs, files in os.walk(results_path):
+                    for file in files:
+                        if file.endswith(suffix) and root.endswith(test_name):
+                            try:
+                                score_file = os.path.join(root, file)
+                                with open(score_file) as f:
+                                    score_data = json.load(f)
+                                    
+                                score_function = json.loads(score_data['choices'][0]['message']['tool_calls'][0]['function']['arguments'])
+
+                                score_value = score_function['score']
+
+                                if score_value in score_summary_row:
+                                    score_summary_row[score_value] += 1
+                                else:
+                                    score_summary_row['Unexpected Scores'] += 1
+                                    unexpected_found = True
+                            except:
+                                score_summary_row['Errors'] += 1
+                                error_found = True
+
+                            
+                score_summary.append(score_summary_row)
+            
+            summary[score_name] = score_summary
+
+        for score_name in summary:
+            for score_summary_row in summary[score_name]:
+                if error_found == False:
+                    del score_summary_row['Errors']
+                if unexpected_found == False:
+                    del score_summary_row['Unexpected Scores']
+
+                score_count = 0 
+                score_total = 0
+                min_acceptable_count = 0
+
+                for rubric_key in self.scores[score_name].rubric:
+                    score_count += score_summary_row[rubric_key]
+                    if rubric_key.isdigit():
+                        score_total += int(rubric_key) * score_summary_row[rubric_key]
+
+                        if self.scores[score_name].min_acceptable_score is not None and int(rubric_key) >= self.scores[score_name].min_acceptable_score:
+                            min_acceptable_count += score_summary_row[rubric_key]
+
+                if score_count > 0:
+                    score_summary_row['Average'] = f'{score_total / score_count:.2f}'
+                    if self.scores[score_name].min_acceptable_score is not None:
+                        score_summary_row[f'>= {self.scores[score_name].min_acceptable_score}'] = f'{min_acceptable_count / score_count:.1%}'
+
+            summary[score_name] = sorted(summary[score_name], key=lambda x: (x['Test'].lower() != 'control', x['Test'].lower()))
+
+        return summary
